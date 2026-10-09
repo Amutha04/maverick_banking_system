@@ -1,21 +1,18 @@
 package com.springboot.BankingSystem.model;
 
-import com.springboot.BankingSystem.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
-@Entity
-public class Customer {
-
+public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,31 +20,17 @@ public class Customer {
     @Column(nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-
     @Column(nullable = false)
-    private LocalDate dob;
-
-    @Column(length = 1000)
-    private String address;
-
     private String email;
 
     @Column(nullable = false)
-    private Long contact;
-
-    @Column(name = "aadhaar_number", nullable = false)
-    private Long aadhaarNumber;
-
-    @Column(name = "pan_number")
-    private String panNumber;
+    private String contact;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
     private Instant updatedAt;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(nullable = false)
     private User user;
 }

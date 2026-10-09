@@ -1,12 +1,12 @@
 package com.springboot.BankingSystem.model;
 
-import com.springboot.BankingSystem.enums.Gender;
+import com.springboot.BankingSystem.enums.JobTitle;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.ConditionalOnIssuerLocationJwtDecoder;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,34 +14,23 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Entity
-public class Customer {
-
+public class Executive {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue( strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-
     @Column(nullable = false)
-    private LocalDate dob;
-
-    @Column(length = 1000)
-    private String address;
-
     private String email;
 
     @Column(nullable = false)
-    private Long contact;
+    private String contact;
 
-    @Column(name = "aadhaar_number", nullable = false)
-    private Long aadhaarNumber;
-
-    @Column(name = "pan_number")
-    private String panNumber;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_title")
+    private JobTitle jobTitle;
 
     @Column(name = "updated_at")
     @UpdateTimestamp

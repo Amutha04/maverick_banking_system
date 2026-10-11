@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,9 +29,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private Instant createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "is_active")
     private boolean isActive = true;

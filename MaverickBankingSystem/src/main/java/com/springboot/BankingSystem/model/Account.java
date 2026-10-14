@@ -25,9 +25,6 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
-    @Column(name = "ifsc_code", nullable = false)
-    private String ifscCode;
-
     private double balance;
 
     @Column(name = "opened_on")
@@ -40,4 +37,8 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "executive_id")
+    private Executive executive;
 }

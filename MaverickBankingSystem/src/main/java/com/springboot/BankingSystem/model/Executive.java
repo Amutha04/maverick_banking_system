@@ -26,7 +26,7 @@ public class Executive {
     private String email;
 
     @Column(nullable = false)
-    private String contact;
+    private Long contact;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "job_title")
@@ -39,4 +39,9 @@ public class Executive {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id", nullable = false)
+    private Branch branch;
+
 }

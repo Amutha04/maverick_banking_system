@@ -1,6 +1,7 @@
 package com.springboot.BankingSystem.config;
 
 import com.springboot.BankingSystem.dto.response.ErrorDto;
+import com.springboot.BankingSystem.exception.OwnershipException;
 import com.springboot.BankingSystem.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -42,6 +43,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(map);
+    }
+
+    @ExceptionHandler(OwnershipException.class)
+    public ResponseEntity<ErrorDto> handleOwnershipException(
+            OwnershipException e
+    ){
+        //always reply the object not the string
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        new ErrorDto(e.getMessage(),
+                                "Logged-in User cannot perform this operation",
+                                Instant.now())
+                );
     }
 
 }

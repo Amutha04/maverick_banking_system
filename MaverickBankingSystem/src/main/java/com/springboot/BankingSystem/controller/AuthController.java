@@ -1,6 +1,7 @@
 package com.springboot.BankingSystem.controller;
 
 import com.springboot.BankingSystem.dto.response.TokenDto;
+import com.springboot.BankingSystem.repository.UserRepository;
 import com.springboot.BankingSystem.utility.JwtUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 public class AuthController {
 
     private final JwtUtility jwtUtility;
+    private final UserRepository userRepository;
 
     @GetMapping("/api/auth/login")
     public TokenDto login(Principal principal) {

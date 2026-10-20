@@ -16,7 +16,7 @@ import java.time.Instant;
 @Entity
 public class Executive {
     @Id
-    @GeneratedValue( strategy = GenerationType.AUTO)
+    @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

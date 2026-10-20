@@ -1,6 +1,7 @@
 package com.springboot.BankingSystem.model;
 
 import com.springboot.BankingSystem.enums.Gender;
+import com.springboot.BankingSystem.enums.KYCStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -40,8 +41,15 @@ public class Customer {
     @Column(name = "aadhaar_number", nullable = false)
     private Long aadhaarNumber;
 
-    @Column(name = "pan_number")
+    @Column(name = "pan_number", nullable = false)
     private String panNumber;
+
+    @Column(name = "cibil_score")
+    private Integer cibilScore;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "kyc_status")
+    private KYCStatus kycStatus = KYCStatus.PENDING;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
@@ -50,4 +58,9 @@ public class Customer {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @PrePersist
+    public void init() {
+        cibilScore = (int) (Math.random() * (601)) + 300;;
+    }
 }

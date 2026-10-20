@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,19 +25,32 @@ public class CustomerController {
     }
 
     @PutMapping("/api/customer/delete/{customerId}")
-    public void delete(@PathVariable("customerId") Long customerId) {
-        customerService.delete(customerId);
+    public void delete(@PathVariable("customerId") Long customerId, Principal principal) {
+        customerService.delete(customerId, principal.getName());
     }
 
     @GetMapping("/api/customer/all")
     public List<CustomerInfoDto> getAll(@RequestParam(name = "page", required = false, defaultValue = "0") int page,
-                                        @RequestParam(name = "size", required = false, defaultValue = "20") int size) {
-        return customerService.getAll(page, size);
+                                        @RequestParam(name = "size", required = false, defaultValue = "20") int size,
+                                        Principal principal) {
+        return customerService.getAll(page, size, principal.getName());
     }
 
     @GetMapping("/api/customer/{customerId}")
-    public CustomerRespDto getByID(@PathVariable("customerId") Long id) {
-        return customerService.getById(id);
+    public CustomerRespDto getByID(@PathVariable("customerId") Long id,
+                                   Principal principal) {
+        return customerService.getById(id, principal.getName());
+    }
+
+    @GetMapping("/api/customer")
+    public CustomerRespDto get(Principal principal) {
+        return customerService.get(principal.getName());
+    }
+
+    @PutMapping("/api/customer/kyc-update/{customerId}")
+    public void updateKYC(@PathVariable Long customerId,
+                          Principal principal) {
+        customerService.updateKYC(customerId, principal.getName());
     }
 
     @GetMapping("/api/customer/filter")

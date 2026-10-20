@@ -1,6 +1,7 @@
 package com.springboot.BankingSystem.dto.response;
 
 import com.springboot.BankingSystem.enums.Gender;
+import com.springboot.BankingSystem.enums.KYCStatus;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public record CustomerRespDto (
         Long contact,
         Long aadhaarNumber,
         String panNumber,
-        Instant updatedAt,
+        KYCStatus kycStatus,
         String username
 ){
 }

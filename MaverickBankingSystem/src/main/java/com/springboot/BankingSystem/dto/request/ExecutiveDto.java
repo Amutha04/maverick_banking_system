@@ -21,6 +21,8 @@ public record ExecutiveDto(
         String username,
         @NotNull(message = "Password is required")
         @NotBlank(message = "Password is required")
-        String password
+        String password,
+        @NotNull(message = "Branch ID is required")
+        Long branchId
 ) {
 }

@@ -14,7 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+@EnableTransactionManagement
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -28,7 +30,31 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // log in API
                         .requestMatchers(HttpMethod.GET,"/api/auth/login").authenticated()
+                        .requestMatchers(HttpMethod.POST,"/api/admin/add").denyAll()
+
+                        // CustomerController
                         .requestMatchers(HttpMethod.POST,"/api/customer/add").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/api/customer/delete/{customerId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/customer/all").hasAnyAuthority("ADMIN","EXECUTIVE")
+                        .requestMatchers(HttpMethod.GET,"/api/customer/{customerId}").hasAnyAuthority("ADMIN","EXECUTIVE")
+                        .requestMatchers(HttpMethod.GET,"/api/customer").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET,"/api/customer/kyc-update/{customerId}").hasAuthority("EXECUTIVE")
+
+                        // ExecutiveController
+                        .requestMatchers(HttpMethod.POST,"/api/executive/add").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/executive/delete/{executiveId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/executive/all").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/executive/{executiveId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/executive").hasAuthority("EXECUTIVE")
+                        .requestMatchers(HttpMethod.PUT,"/api/executive/update-jobtitle/{executiveId}").hasAuthority("ADMIN")
+
+                        // AccountController
+                        .requestMatchers(HttpMethod.POST,"/api/account/request").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.PUT,"/api/account/approve/{accountId}").hasAuthority("EXECUTIVE")
+                        .requestMatchers(HttpMethod.PUT,"/api/account/reject/{accountId}").hasAuthority("EXECUTIVE")
+                        .requestMatchers(HttpMethod.GET,"/api/account/all").hasAnyAuthority("EXECUTIVE", "ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/account/get/{customerId}").hasAnyAuthority("EXECUTIVE", "ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/account/{accountId}").hasAuthority("CUSTOMER")
                         .anyRequest().permitAll()
                 );
         // Add jwt filter before Spring's Auth Filter

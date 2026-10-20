@@ -31,7 +31,7 @@ public class CustomerMapper {
                 customer.getContact(),
                 customer.getAadhaarNumber(),
                 customer.getPanNumber(),
-                customer.getUpdatedAt(),
+                customer.getKycStatus(),
                 customer.getUser().getUsername()
         );
     }

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 
@@ -24,7 +25,7 @@ public class Loan {
     @Enumerated(EnumType.STRING)
     private LoanType loanType;
 
-    private double amount;
+    private BigDecimal amount;
 
     @Column(name = "disbursed_date")
     @CreationTimestamp

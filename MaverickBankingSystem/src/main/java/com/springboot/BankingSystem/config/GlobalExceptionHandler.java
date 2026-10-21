@@ -121,4 +121,17 @@ public class GlobalExceptionHandler {
                                 Instant.now())
                 );
     }
+
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<ErrorDto> handleInsufficientBalanceException(
+            InsufficientBalanceException e
+    ){
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        new ErrorDto(e.getMessage(),
+                                "Check balance before debit",
+                                Instant.now())
+                );
+    }
 }

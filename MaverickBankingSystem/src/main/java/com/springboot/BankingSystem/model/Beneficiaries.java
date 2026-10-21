@@ -23,7 +23,7 @@ public class Beneficiaries {
     @Column(name = "account_number", nullable = false)
     private Long accountNumber;
 
-    @Column(name = "opened_on")
+    @Column(name = "added_on")
     @CreationTimestamp
     private Instant addedOn;
 

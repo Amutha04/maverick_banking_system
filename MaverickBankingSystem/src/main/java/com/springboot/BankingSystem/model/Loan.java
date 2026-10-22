@@ -7,7 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
 
 
 @NoArgsConstructor
@@ -28,18 +28,32 @@ public class Loan {
     private BigDecimal amount;
 
     @Column(name = "disbursed_date")
-    @CreationTimestamp
-    private Instant disbursedDate;
+    private LocalDate disbursedDate;
 
     @Column(name = "interest_rate", nullable = false)
-    private int interestRate;
+    private BigDecimal interestRate;
 
     @Column(name = "tenure_months", nullable = false)
     private int tenureMonths;
 
     @Column(name = "loan_status")
     @Enumerated(EnumType.STRING)
-    private LoanStatus loanStatus;
+    private LoanStatus loanStatus = LoanStatus.IN_PROCESS;
+
+    @Column(name = "requested_on")
+    @CreationTimestamp
+    private LocalDate requestedOn;
+
+    @Column(name = "processed_on")
+    private LocalDate processedOn;
+
+    private String remark;
+
+    @Column(name = "outstanding_amount")
+    private BigDecimal outstandingAmount;
+
+    @Column(name = "closed_on")
+    private LocalDate closedOn;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)

@@ -45,5 +45,4 @@ public class AccountController {
         accountService.suspend(accountId, principal.getName());
     }
 
-
 }

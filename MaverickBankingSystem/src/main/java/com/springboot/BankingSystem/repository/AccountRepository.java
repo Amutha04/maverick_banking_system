@@ -49,5 +49,14 @@ from Account a
 where a.status = AccountStatus.ACTIVE
 AND a.accountNumber = ?1
 """)
-    Account findByAccountNumber(Long aLong);
+    Account findByAccountNumber(Long accountNumber);
+
+    @Query("""
+select count(a.id) > 0
+from Account a
+join a.customer c
+where c.id = ?1
+AND a.status != AccountStatus.CLOSED
+""")
+    boolean getAccountByCustomerId(Long id);
 }

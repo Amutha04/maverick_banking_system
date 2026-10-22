@@ -1,23 +1,30 @@
 package com.springboot.BankingSystem.service;
 
 import com.springboot.BankingSystem.dto.request.TransactionDto;
+import com.springboot.BankingSystem.dto.response.TransactionInfoDto;
 import com.springboot.BankingSystem.enums.AccountStatus;
 import com.springboot.BankingSystem.enums.TransactionStatus;
 import com.springboot.BankingSystem.enums.TransactionType;
 import com.springboot.BankingSystem.exception.InsufficientBalanceException;
 import com.springboot.BankingSystem.exception.InvalidAccountStateException;
+import com.springboot.BankingSystem.exception.OwnershipException;
 import com.springboot.BankingSystem.exception.ResourceNotFoundException;
 import com.springboot.BankingSystem.model.Account;
 import com.springboot.BankingSystem.model.Transaction;
+import com.springboot.BankingSystem.model.User;
 import com.springboot.BankingSystem.repository.AccountRepository;
 import com.springboot.BankingSystem.repository.TransactionRepository;
 import com.springboot.BankingSystem.utility.RoleCheckUtility;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -116,7 +123,62 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
 
-    private String generateReferenceNumber() {
+    public List<TransactionInfoDto> getAll(int page, int size, String loggedUsername) {
+        // 1. check the logged user belongs to admin or executives
+        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+
+        // 2. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 3. get all transactions
+        return transactionRepository.getAll(pageable);
+    }
+
+    public List<TransactionInfoDto> getByAccount(int page, int size, Long accountId, String loggedUsername) {
+        // 1. check the logged user belongs to admin or executives
+        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+
+        // 2. check the account exists or not
+        accountRepository.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+
+        // 3. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 4. get transactions by account
+        return transactionRepository.getByAccount(accountId, pageable);
+    }
+
+    public List<TransactionInfoDto> get(int page, int size, Long accountId, String loggedUsername) {
+        // 1. check the user is CUSTOMER
+        User user = roleCheckUtility.checkCustomer(loggedUsername);
+
+        // 2. get the account and check the account holder and logged user are same
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+
+        if(!account.getCustomer().getUser().getUsername().equals(loggedUsername))
+            throw new OwnershipException("Unauthorized User");
+
+        // 3. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 4. get transactions of the account
+        return transactionRepository.getByAccount(accountId, pageable);
+    }
+
+    public List<TransactionInfoDto> dynamicTransactionFilter(Long accountNumber, TransactionType transactionType, TransactionStatus transactionStatus, LocalDate from, LocalDate to, int page, int size, String loggedUsername) {
+        // 1. check the logged user belongs to admin or executives
+        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+
+        // 2. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 3. get the list from repo and return
+        return transactionRepository.dynamicTransactionFilter(accountNumber, transactionType, transactionStatus, from, to, pageable);
+    }
+
+    String generateReferenceNumber() {
         return "TXN" + UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase();
     }
 }

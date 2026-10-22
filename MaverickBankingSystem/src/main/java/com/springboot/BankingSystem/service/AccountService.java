@@ -3,14 +3,11 @@ package com.springboot.BankingSystem.service;
 import com.springboot.BankingSystem.dto.response.AccountInfoDto;
 import com.springboot.BankingSystem.dto.response.AccountRespDto;
 import com.springboot.BankingSystem.enums.AccountStatus;
-import com.springboot.BankingSystem.enums.Role;
 import com.springboot.BankingSystem.exception.*;
 import com.springboot.BankingSystem.mapper.AccountMapper;
 import com.springboot.BankingSystem.model.Account;
-import com.springboot.BankingSystem.model.User;
 import com.springboot.BankingSystem.repository.AccountRepository;
 import com.springboot.BankingSystem.repository.CustomerRepository;
-import com.springboot.BankingSystem.repository.UserRepository;
 
 import com.springboot.BankingSystem.utility.RoleCheckUtility;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +20,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-    private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
     private final RoleCheckUtility roleCheckUtility;
@@ -43,7 +39,7 @@ public class AccountService {
 
     public List<AccountInfoDto> getAll(int page, int size, String loggedUsername) {
         // 1. check the logged user belongs to admin or executives
-        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+        roleCheckUtility.checkAdminOrExecutive(loggedUsername);
 
         // 2. set page and size
         Pageable pageable = PageRequest.of(page, size);
@@ -54,7 +50,7 @@ public class AccountService {
 
     public List<AccountInfoDto> getByCustomer(int page, int size, Long customerId, String loggedUsername) {
         // 1. check the logged user belongs to admin or executives
-        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+        roleCheckUtility.checkAdminOrExecutive(loggedUsername);
 
         // 2. check the customer exists or not
         customerRepository.findById(customerId)
@@ -69,7 +65,7 @@ public class AccountService {
 
     public void suspend(Long accountId, String loggedUsername) {
         // 1. check the logged user belongs to admin
-        User user = roleCheckUtility.checkAdmin(loggedUsername);
+        roleCheckUtility.checkAdmin(loggedUsername);
 
         // 2. get account by id
         Account account = accountRepository.findById(accountId)

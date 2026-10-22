@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.lang.module.ResolutionException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -19,7 +18,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AccountRequestService {
 
-    private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final AccountRequestRepository accountRequestRepository;
     private final ExecutiveRepository executiveRepository;
@@ -28,8 +26,8 @@ public class AccountRequestService {
     private final RoleCheckUtility roleCheckUtility;
 
     public void request(AccountDto accountDto, String loggedUsername) {
-        // 1. check the user is CUSTOMER
-        User user = roleCheckUtility.checkCustomer(loggedUsername);
+        // 1. check the user is customer
+        roleCheckUtility.checkCustomer(loggedUsername);
 
         // 2. get customer obj and verify the duplicate request
         Customer customer = customerRepository.findByUsername(loggedUsername);
@@ -55,8 +53,8 @@ public class AccountRequestService {
     }
 
     public void approveOpenRequest(Long accountRequestId, String loggedUsername) {
-        // 1. check the user is EXECUTIVE
-        User user = roleCheckUtility.checkExecutive(loggedUsername);
+        // 1. check the user is executive
+        roleCheckUtility.checkExecutive(loggedUsername);
 
         // 2. get the request and Verify the status
         AccountRequest accountRequest = accountRequestRepository.findById(accountRequestId)
@@ -117,8 +115,8 @@ public class AccountRequestService {
     }
 
     public void rejectOpenRequest(Long accountRequestId, @Valid RejectRequestDto rejectRequestDto, String loggedUsername) {
-        // 1. check the user is EXECUTIVE
-        User user = roleCheckUtility.checkExecutive(loggedUsername);
+        // 1. check the user is executive
+        roleCheckUtility.checkExecutive(loggedUsername);
 
         // 2. check the reason if null or not
         if (rejectRequestDto.reason() == null || rejectRequestDto.reason().isBlank())
@@ -147,7 +145,7 @@ public class AccountRequestService {
 
     public void approveCloseRequest(Long accountRequestId, String loggedUsername) {
         // 1. check the logged user belongs to executive
-        User user = roleCheckUtility.checkExecutive(loggedUsername);
+        roleCheckUtility.checkExecutive(loggedUsername);
 
         // 2. get the request and Verify the status
         AccountRequest accountRequest = accountRequestRepository.findById(accountRequestId)
@@ -185,8 +183,8 @@ public class AccountRequestService {
     }
 
     public void rejectCloseRequest(Long accountRequestId, @Valid RejectRequestDto rejectRequestDto, String loggedUsername) {
-        // 1. check the user is EXECUTIVE
-        User user = roleCheckUtility.checkExecutive(loggedUsername);
+        // 1. check the user is executive
+        roleCheckUtility.checkExecutive(loggedUsername);
 
         // 2. check the reason if null or not
         if (rejectRequestDto.reason() == null || rejectRequestDto.reason().isBlank())

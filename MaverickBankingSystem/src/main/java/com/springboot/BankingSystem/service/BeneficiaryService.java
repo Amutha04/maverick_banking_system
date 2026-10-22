@@ -92,7 +92,7 @@ public class BeneficiaryService {
         if(!account.getCustomer().getUser().getUsername().equals(loggedUsername))
             throw new OwnershipException("Unauthorized User");
 
-        // 4. fill the beneficiary account number and do the transaction
+        // 4. fill the beneficiary account number and add the transaction
         TransactionDto transactionDto = new TransactionDto(
                 beneficiaryTransactionDto.amount(),
                 beneficiary.getAccountNumber(),

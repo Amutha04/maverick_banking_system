@@ -36,7 +36,7 @@ public class Transaction {
 
     private BigDecimal amount;
 
-    @Column(name = "destination_account", nullable = false)
+    @Column(name = "destination_account")
     private Long destinationAccount;
 
     private BigDecimal balance;
@@ -48,6 +48,6 @@ public class Transaction {
     private String remarks;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "account_id")
     private Account account;
 }

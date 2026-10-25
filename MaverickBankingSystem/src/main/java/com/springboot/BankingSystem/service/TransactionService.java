@@ -11,7 +11,6 @@ import com.springboot.BankingSystem.exception.OwnershipException;
 import com.springboot.BankingSystem.exception.ResourceNotFoundException;
 import com.springboot.BankingSystem.model.Account;
 import com.springboot.BankingSystem.model.Transaction;
-import com.springboot.BankingSystem.model.User;
 import com.springboot.BankingSystem.repository.AccountRepository;
 import com.springboot.BankingSystem.repository.TransactionRepository;
 import com.springboot.BankingSystem.utility.RoleCheckUtility;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,7 +32,6 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
-    @Transactional(noRollbackFor = {InsufficientBalanceException.class, InvalidAccountStateException.class})
     public void add(Long accountId, @Valid TransactionDto transactionDto, String loggedUsername) {
         // 1. check the customer role
         roleCheckUtility.checkCustomer(loggedUsername);
@@ -125,7 +122,7 @@ public class TransactionService {
 
     public List<TransactionInfoDto> getAll(int page, int size, String loggedUsername) {
         // 1. check the logged user belongs to admin or executives
-        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+        roleCheckUtility.checkAdminOrExecutive(loggedUsername);
 
         // 2. set page and size
         Pageable pageable = PageRequest.of(page, size);
@@ -136,7 +133,7 @@ public class TransactionService {
 
     public List<TransactionInfoDto> getByAccount(int page, int size, Long accountId, String loggedUsername) {
         // 1. check the logged user belongs to admin or executives
-        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+        roleCheckUtility.checkAdminOrExecutive(loggedUsername);
 
         // 2. check the account exists or not
         accountRepository.findById(accountId)
@@ -151,7 +148,7 @@ public class TransactionService {
 
     public List<TransactionInfoDto> get(int page, int size, Long accountId, String loggedUsername) {
         // 1. check the user is CUSTOMER
-        User user = roleCheckUtility.checkCustomer(loggedUsername);
+        roleCheckUtility.checkCustomer(loggedUsername);
 
         // 2. get the account and check the account holder and logged user are same
         Account account = accountRepository.findById(accountId)
@@ -169,7 +166,7 @@ public class TransactionService {
 
     public List<TransactionInfoDto> dynamicTransactionFilter(Long accountNumber, TransactionType transactionType, TransactionStatus transactionStatus, LocalDate from, LocalDate to, int page, int size, String loggedUsername) {
         // 1. check the logged user belongs to admin or executives
-        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+        roleCheckUtility.checkAdminOrExecutive(loggedUsername);
 
         // 2. set page and size
         Pageable pageable = PageRequest.of(page, size);

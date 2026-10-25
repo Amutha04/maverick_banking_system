@@ -114,7 +114,7 @@ public class AccountRequestService {
         return accountNumber;
     }
 
-    public void rejectOpenRequest(Long accountRequestId, @Valid RejectRequestDto rejectRequestDto, String loggedUsername) {
+    public void rejectRequest(Long accountRequestId, @Valid RejectRequestDto rejectRequestDto, String loggedUsername) {
         // 1. check the user is executive
         roleCheckUtility.checkExecutive(loggedUsername);
 
@@ -172,39 +172,16 @@ public class AccountRequestService {
         if(loanRepository.checkForOpenLoan(account.getId()))
             throw new InvalidAccountStateException("All Loans must be closed");
 
-        // 6. close the account and approve the request
+        // 6. reject the loan which are in IN_PROCESS or SANCTIONED
+        loanRepository.rejectNotOpenedLoans(account.getId(), "Account is closed");
+
+        // 7. close the account and approve the request
         account.setStatus(AccountStatus.CLOSED);
         account.setClosed_on(LocalDate.now());
         accountRepository.save(account);
 
         accountRequest.setRequestStatus(RequestStatus.APPROVED);
         accountRequest.setProcessedOn(LocalDate.now());
-        accountRequestRepository.save(accountRequest);
-    }
-
-    public void rejectCloseRequest(Long accountRequestId, @Valid RejectRequestDto rejectRequestDto, String loggedUsername) {
-        // 1. check the user is executive
-        roleCheckUtility.checkExecutive(loggedUsername);
-
-        // 2. check the reason if null or not
-        if (rejectRequestDto.reason() == null || rejectRequestDto.reason().isBlank())
-            throw new IllegalArgumentException("Rejection reason is required");
-
-        // 3. get the request and Verify the status
-        AccountRequest accountRequest = accountRequestRepository.findById(accountRequestId)
-                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
-
-        if(!accountRequest.getCustomer().getUser().isActive())
-            throw new ResourceNotFoundException("Customer not found");
-
-        if(accountRequest.getRequestStatus() != RequestStatus.IN_PROCESS)
-            throw new InvalidAccountStateException("Request is already " + accountRequest.getRequestStatus());
-
-        // 4. reject the request and update
-        accountRequest.setRequestStatus(RequestStatus.REJECTED);
-        accountRequest.setRemark(rejectRequestDto.reason());
-        accountRequest.setProcessedOn(LocalDate.now());
-
         accountRequestRepository.save(accountRequest);
     }
 }

@@ -60,4 +60,44 @@ public class LoanController {
                       Principal principal) {
         loanService.repay(loanId, repaymentDto, principal.getName());
     }
+
+    @GetMapping("/api/loan/all")
+    public List<LoanInfoDto> getAll(@RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                    @RequestParam(name = "size", required = false, defaultValue = "20") int size,
+                                    Principal principal) {
+        return loanService.getAll(page, size, principal.getName());
+    }
+
+    @GetMapping("/api/loan/get/{customerId}")
+    public List<LoanInfoDto> getByCustomer(@RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                           @RequestParam(name = "size", required = false, defaultValue = "20") int size,
+                                           @PathVariable Long customerId,
+                                           Principal principal) {
+        return loanService.getByCustomer(page, size, customerId, principal.getName());
+    }
+
+    @GetMapping("/api/loan")
+    public List<LoanInfoDto> get(@RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                 @RequestParam(name = "size", required = false, defaultValue = "20") int size,
+                                 Principal principal) {
+        return loanService.get(page, size, principal.getName());
+    }
+
+    @GetMapping("/api/loan/{loanId}")
+    public LoanInfoDto getById(@PathVariable Long loanId,
+                               Principal principal) {
+        return loanService.getById(loanId, principal.getName());
+    }
+
+    @GetMapping("/api/loan/filter")
+    public List<LoanInfoDto> dynamicLoanFilter(@RequestParam(name = "loanType", required = false) LoanType loanType,
+                                               @RequestParam(name = "loanStatus", required = false) LoanStatus loanStatus,
+                                               @RequestParam(name = "accountNumber", required = false) Long accountNumber,
+                                               @RequestParam(name = "requestedFrom", required = false) LocalDate requestedFrom,
+                                               @RequestParam(name = "requestedTo", required = false) LocalDate requestedTo,
+                                               @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                               @RequestParam(name = "size", required = false, defaultValue = "20") int size,
+                                               Principal principal) {
+        return loanService.dynamicLoanFilter(loanType, loanStatus, accountNumber, requestedFrom, requestedTo, page, size, principal.getName());
+    }
 }

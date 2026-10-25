@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record LoanInfoDto(
-        Long id,
         LoanType loanType,
         BigDecimal amount,
         int interestRate,

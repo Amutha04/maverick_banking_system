@@ -7,7 +7,6 @@ import com.springboot.BankingSystem.enums.Gender;
 import com.springboot.BankingSystem.enums.KYCStatus;
 import com.springboot.BankingSystem.enums.Role;
 import com.springboot.BankingSystem.exception.InvalidAccountStateException;
-import com.springboot.BankingSystem.exception.OwnershipException;
 import com.springboot.BankingSystem.exception.ResourceNotFoundException;
 import com.springboot.BankingSystem.mapper.CustomerMapper;
 import com.springboot.BankingSystem.model.Customer;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,7 +39,7 @@ public class CustomerService {
 
     public CustomerRespDto getById(Long id, String loggedUsername) {
         // 1. check the logged user belongs to admin or executives
-        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+        roleCheckUtility.checkAdminOrExecutive(loggedUsername);
 
         // 2. get customer obj by id
         Customer customer = customerRepository.findById(id)
@@ -52,7 +50,6 @@ public class CustomerService {
         // 3. convert customer into dto and return
         return CustomerMapper.convertCustomerToDto(customer);
     }
-
 
     public void add(@Valid CustomerDto customerDto) {
         // 1. create user obj and save that in  db
@@ -71,7 +68,6 @@ public class CustomerService {
         // 4. save customer obj in db
         customerRepository.save(customer);
     }
-
 
     public void delete(Long customerId, String loggedUsername) {
         // 1. check the logged-in user is admin or not
@@ -98,7 +94,7 @@ public class CustomerService {
 
     public List<CustomerInfoDto> getAll(int page, int size, String loggedUsername) {
         // 1. check the logged user belongs to admin or executives
-        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+        roleCheckUtility.checkAdminOrExecutive(loggedUsername);
 
         // 2. Set page and size
         Pageable pageable = PageRequest.of(page, size);

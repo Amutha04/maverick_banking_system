@@ -27,23 +27,16 @@ public class AccountRequestController {
         accountRequestService.approveOpenRequest(accountRequestId, principal.getName());
     }
 
-    @PutMapping("/api/account/open-request/reject/{accountRequestId}")
+    @PutMapping("/api/account/request/reject/{accountRequestId}")
     public void rejectOpenRequest(@PathVariable Long accountRequestId,
                                   @Valid @RequestBody RejectRequestDto rejectRequestDto,
                                   Principal principal) {
-        accountRequestService.rejectOpenRequest(accountRequestId, rejectRequestDto, principal.getName());
+        accountRequestService.rejectRequest(accountRequestId, rejectRequestDto, principal.getName());
     }
 
     @PutMapping("/api/account/close-request/approve/{accountRequestId}")
     public void approveCloseRequest(@PathVariable Long accountRequestId,
                                     Principal principal) {
         accountRequestService.approveCloseRequest(accountRequestId, principal.getName());
-    }
-
-    @PutMapping("/api/account/close-request/reject/{accountRequestId}")
-    public void rejectCloseRequest(@PathVariable Long accountRequestId,
-                                   @Valid @RequestBody RejectRequestDto rejectRequestDto,
-                                   Principal principal) {
-        accountRequestService.rejectCloseRequest(accountRequestId, rejectRequestDto, principal.getName());
     }
 }

@@ -18,7 +18,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 select count(a.id) > 0
 from Account a
 where a.accountNumber = ?1
-AND a.status = AccountStatus.ACTIVE
+AND a.status != AccountStatus.CLOSED
 """)
     boolean existsByAccountNumber(long accountNumber);
 

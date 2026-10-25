@@ -8,17 +8,12 @@ import com.springboot.BankingSystem.enums.*;
 import com.springboot.BankingSystem.exception.*;
 import com.springboot.BankingSystem.mapper.LoanMapper;
 import com.springboot.BankingSystem.model.*;
-import com.springboot.BankingSystem.repository.AccountRepository;
-import com.springboot.BankingSystem.repository.CustomerRepository;
-import com.springboot.BankingSystem.repository.ExecutiveRepository;
-import com.springboot.BankingSystem.repository.LoanRepository;
-import com.springboot.BankingSystem.repository.TransactionRepository;
+import com.springboot.BankingSystem.repository.*;
 import com.springboot.BankingSystem.utility.RoleCheckUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -38,7 +33,7 @@ public class LoanService {
 
     public void request(Long accountId, LoanDto loanDto, String loggedUsername) {
         // 1. check the user is CUSTOMER
-        User user = roleCheckUtility.checkCustomer(loggedUsername);
+        roleCheckUtility.checkCustomer(loggedUsername);
 
         // 2. amount and tenure should be positive
         if(loanDto.amount().compareTo(BigDecimal.ZERO) <= 0)
@@ -76,7 +71,7 @@ public class LoanService {
 
     public void approve(Long loanId, String loggedUsername) {
         // 1. check the user is executive
-        User user = roleCheckUtility.checkExecutive(loggedUsername);
+        roleCheckUtility.checkExecutive(loggedUsername);
 
         // 2. get the loan and Verify the status
         Loan loan = loanRepository.findById(loanId)
@@ -123,7 +118,7 @@ public class LoanService {
 
     public void reject(Long loanId, RejectRequestDto rejectRequestDto, String loggedUsername) {
         // 1. check the user is EXECUTIVE
-        User user = roleCheckUtility.checkExecutive(loggedUsername);
+        roleCheckUtility.checkExecutive(loggedUsername);
 
         // 2. check the reason if null or not
         if (rejectRequestDto.reason() == null || rejectRequestDto.reason().isBlank())
@@ -152,7 +147,7 @@ public class LoanService {
 
     public void accept(Long loanId, String loggedUsername) {
         // 1. check the user is CUSTOMER
-        User user = roleCheckUtility.checkCustomer(loggedUsername);
+        roleCheckUtility.checkCustomer(loggedUsername);
 
         // 2. get the loan and check the loan holder and logged user are same
         Loan loan = loanRepository.findById(loanId)
@@ -197,7 +192,7 @@ public class LoanService {
 
     public void decline(Long loanId, RejectRequestDto rejectRequestDto, String loggedUsername) {
         // 1. check the user is CUSTOMER
-        User user = roleCheckUtility.checkCustomer(loggedUsername);
+        roleCheckUtility.checkCustomer(loggedUsername);
 
         // 2. check the reason if null or not
         if (rejectRequestDto.reason() == null || rejectRequestDto.reason().isBlank())
@@ -223,7 +218,7 @@ public class LoanService {
 
     public void repay(Long loanId, RepaymentDto repaymentDto, String loggedUsername) {
         // 1. check the user is CUSTOMER
-        User user = roleCheckUtility.checkCustomer(loggedUsername);
+        roleCheckUtility.checkCustomer(loggedUsername);
 
         // 2. amount should be positive
         if(repaymentDto.amount().compareTo(BigDecimal.ZERO) <= 0)
@@ -279,6 +274,69 @@ public class LoanService {
         }
 
         loanRepository.save(loan);
+    }
+
+    public List<LoanInfoDto> getAll(int page, int size, String loggedUsername) {
+        // 1. check the logged user belongs to admin or executives
+        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+
+        // 2. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 3. get all loans
+        return loanRepository.getAll(pageable);
+    }
+
+    public List<LoanInfoDto> getByCustomer(int page, int size, Long customerId, String loggedUsername) {
+        // 1. check the logged user belongs to admin or executives
+        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+
+        // 2. check the customer exists or not
+        customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        // 3. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 4. get loans by customer
+        return loanRepository.getByCustomer(customerId, pageable);
+    }
+
+    public List<LoanInfoDto> get(int page, int size, String loggedUsername) {
+        // 1. check the user is CUSTOMER
+        User user = roleCheckUtility.checkCustomer(loggedUsername);
+
+        // 2. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 3. get the loans of the logged-in customer
+        return loanRepository.getByUsername(loggedUsername, pageable);
+    }
+
+    public LoanInfoDto getById(Long loanId, String loggedUsername) {
+        // 1. check the user is CUSTOMER
+        User user = roleCheckUtility.checkCustomer(loggedUsername);
+
+        // 2. get the loan and check the loan holder and logged user are same
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found"));
+
+        if(!loan.getAccount().getCustomer().getUser().getUsername().equals(loggedUsername))
+            throw new OwnershipException("Unauthorized User");
+
+        // 3. convert the loan into dto and return
+        return LoanMapper.convertLoanToDto(loan);
+    }
+
+    public List<LoanInfoDto> dynamicLoanFilter(LoanType loanType, LoanStatus loanStatus, Long accountNumber, LocalDate requestedFrom, LocalDate requestedTo, int page, int size, String loggedUsername) {
+        // 1. check the logged user belongs to admin or executives
+        User user = roleCheckUtility.checkAdminOrExecutive(loggedUsername);
+
+        // 2. set page and size
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 3. get the list from repo and return
+        return loanRepository.dynamicLoanFilter(loanType, loanStatus, accountNumber, requestedFrom, requestedTo, pageable);
     }
 
     private int getInterestRate(LoanType loanType) {

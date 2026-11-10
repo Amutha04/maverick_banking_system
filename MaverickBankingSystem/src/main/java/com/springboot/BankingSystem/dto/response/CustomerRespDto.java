@@ -1,0 +1,25 @@
+package com.springboot.BankingSystem.dto.response;
+
+import com.springboot.BankingSystem.enums.Gender;
+import com.springboot.BankingSystem.enums.KYCStatus;
+
+import java.time.Instant;
+import java.time.LocalDate;
+
+public record CustomerRespDto (
+        String name,
+        Gender gender,
+        LocalDate dob,
+        String address,
+        String email,
+        Long contact,
+        Long aadhaarNumber,
+        String panNumber,
+        KYCStatus kycStatus,
+        String username,
+        String aadhaarUrl,
+        String panUrl,
+        String photoUrl,
+        String signatureUrl
+){
+}

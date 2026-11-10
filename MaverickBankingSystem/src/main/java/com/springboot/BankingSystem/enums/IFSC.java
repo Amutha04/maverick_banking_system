@@ -1,0 +1,16 @@
+package com.springboot.BankingSystem.enums;
+
+public enum IFSC {
+    DEMO0001001,
+    DEMO0001002,
+    DEMO0001003,
+    DEMO0001004,
+    DEMO0002001,
+    DEMO0002002,
+    DEMO0003001,
+    DEMO0003002,
+    DEMO0004001,
+    DEMO0004002,
+    DEMO0005001,
+    DEMO0005002
+}

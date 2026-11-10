@@ -1,0 +1,54 @@
+body{background:#f4f6f9;font-size:.95rem}
+.sidebar{--bs-offcanvas-width:250px}
+.sb-bg{background:#0b2a4a;min-height:100%;height:100%;overflow-y:auto}
+.sidebar .nav-link{color:#c8d3e0;border-radius:.375rem;padding:.6rem .85rem}
+.sidebar .nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar .nav-link.active{background:#1d4f91;color:#fff}
+.sidebar .nav-link i{margin-right:.65rem}
+.sidebar .nav{flex:1 1 auto}
+.sidebar .nav-link.logout{margin-top:auto}
+@media (min-width:768px){
+ .sidebar{position:fixed!important;top:0;bottom:0;left:0;width:250px!important;height:100vh!important;z-index:1020}
+ .main{margin-left:250px}
+}
+.card{border:1px solid #e3e8ef}
+.stat-label{font-size:.8rem;color:#6c757d}
+.table th{font-weight:600;color:#495057;white-space:nowrap}
+
+
+:root {
+    --mv-blue: #1d4f91;
+    --mv-blue-dark: #163c70;
+}
+
+.text-maverick { color: var(--mv-blue); }
+
+.btn-maverick {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--mv-blue);
+    --bs-btn-border-color: var(--mv-blue);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--mv-blue-dark);
+    --bs-btn-hover-border-color: var(--mv-blue-dark);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--mv-blue-dark);
+    --bs-btn-active-border-color: var(--mv-blue-dark);
+    --bs-btn-disabled-bg: var(--mv-blue);
+    --bs-btn-disabled-border-color: var(--mv-blue);
+}
+
+/* transaction tabs in the maverick theme, same colour as .btn-maverick */
+.nav-pills {
+    --bs-nav-pills-link-active-bg: var(--mv-blue);
+    --bs-nav-pills-link-active-color: #fff;
+}
+.nav-pills .nav-link { color: var(--mv-blue); }
+.nav-pills .nav-link:hover { color: var(--mv-blue-dark); }
+
+/* pagination in the maverick theme */
+.pagination {
+    --bs-pagination-color: var(--mv-blue);
+    --bs-pagination-hover-color: var(--mv-blue-dark);
+    --bs-pagination-active-bg: var(--mv-blue);
+    --bs-pagination-active-border-color: var(--mv-blue);
+}

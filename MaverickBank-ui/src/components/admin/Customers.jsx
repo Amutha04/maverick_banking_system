@@ -140,9 +140,9 @@ function Customers() {
                 <div className="card-body">
                     <form className="row g-3 align-items-end" onSubmit={onSearch}>
                         <div className="col-md-3">
-                            <label className="form-label">Name</label>
+                            <label htmlFor="search" className="form-label">Name</label>
                             <div className="input-group">
-                                <input type="text" className="form-control" placeholder="Search" value={nameInput} onChange={(e) => setNameInput(e.target.value)} />
+                                <input id="search" type="text" className="form-control" placeholder="Search" value={nameInput} onChange={(e) => setNameInput(e.target.value)} />
                                 <button type="submit" className="btn btn-outline-secondary"><i className="bi bi-search"></i></button>
                             </div>
                         </div>
